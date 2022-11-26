@@ -20,6 +20,11 @@ This role has been tested on the following platforms:
 * Ubuntu Server 22.04 x64
 
 ## Installation
+### ansible-galaxy
+```
+ansible-galaxy install hampusstrom.headscale
+```
+
 ### Manual Installation
 Current user only:
 ```
@@ -28,11 +33,6 @@ git clone https://github.com/hampusstrom/ansible-role-headscale.git ~/.ansible/r
 System wide:
 ```
 git clone https://github.com/hampusstrom/ansible-role-headscale.git /etc/ansible/roles/hampusstrom.headscale
-```
-### ansible-galaxy
-Coming soon(tm)...
-```
-ansible-galaxy install hampusstrom.headscale
 ```
 
 ## Requirements
