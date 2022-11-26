@@ -1,0 +1,10 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Ensure that headscale is serving http data.
+    ansible.builtin.assert:
+      that: headscale_metrics.status == 200

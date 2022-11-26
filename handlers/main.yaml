@@ -1,0 +1,6 @@
+---
+- name: enable service
+  include_tasks: enable_service.yaml
+
+- name: restart service
+  include_tasks: restart_service.yaml

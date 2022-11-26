@@ -1,0 +1,27 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: headscale
+  author: hampusstrom
+  description: Deploys Headscale, An open source, self-hosted implementation of the Tailscale control server.
+  company: "hampusstrom.com"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Debian
+      versions:
+        - 10
+        - 11
+    - name: Ubuntu
+      versions:
+        - 22.04
+        - 20.04
+  galaxy_tags:
+    - headscale
+    - tailscale
+    - vpn

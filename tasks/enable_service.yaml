@@ -1,0 +1,10 @@
+---
+- name: Reload systemd daemon to pick up new unit files/configuration.
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start headscale daemon.
+  ansible.builtin.systemd:
+    name: headscale.service
+    state: started
+    enabled: true

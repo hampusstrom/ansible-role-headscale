@@ -1,0 +1,122 @@
+---
+- name: Stop headscale service if it already exists.
+  ansible.builtin.systemd:
+    name: headscale.service
+    state: stopped
+  ignore_errors: true
+
+- block:
+  - name: Determine latest headscale GitHub release tag.
+    delegate_to: localhost
+    become: false
+    ansible.builtin.uri:
+      url: "https://api.github.com/repos/{{ headscale_github_repository }}/releases/latest"
+      body_format: json
+    register: github_release
+    until: github_release.status == 200
+    retries: 5
+
+  - name: Set headscale_version (without 'v' prefix).
+    ansible.builtin.set_fact:
+      headscale_version: "{{ github_release.json.tag_name
+        | regex_replace('^v?(.*)$', '\\1') | trim }}"
+
+  - name: Print latest headscale version.
+    ansible.builtin.debug:
+      msg: "{{ github_release.json.tag_name }}"
+
+  when: (headscale_version is not defined) or (headscale_version == 'latest')
+  run_once: true
+
+- name: Set DPKG architecture
+  set_fact:
+    dpkg_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+
+- name: Get OS Architecture.
+  set_fact:
+    os_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+
+- name: Get Linux/Darwin.
+  ansible.builtin.shell:
+    cmd: |
+      uname
+  changed_when: false
+  register: uname_result
+
+# base releases url/version tag/filename
+- name: Download latest headscale release for our architecture.
+  ansible.builtin.get_url:
+    url: "https://github.com/{{ headscale_github_repository }}/releases/download/\
+          v{{ headscale_version }}/\
+          headscale_{{ headscale_version }}_{{ uname_result.stdout }}_{{ os_architecture }}"
+    dest: "{{ headscale_binary_path }}"
+    owner: root
+    group: root
+    mode: 0655
+  notify: restart service
+
+- name: "Create user {{ headscale_user_name }}."
+  ansible.builtin.user:
+    name: "{{ headscale_user_name }}"
+    uid: "{{ headscale_user_uid }}"
+    system: true
+    shell: /usr/bin/nologin
+    home: "{{ headscale_lib_dir_path }}"
+    state: present
+    create_home: true
+
+- name: "Create {{ headscale_lib_dir_path }} directory."
+  ansible.builtin.file:
+    path: "{{ headscale_lib_dir_path }}"
+    state: directory
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0770
+
+- name: "Create {{ headscale_etc_dir_path }} directory."
+  ansible.builtin.file:
+    path: "{{ headscale_etc_dir_path }}"
+    state: directory
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0770
+
+- name: "Create {{ headscale_db_path }}."
+  ansible.builtin.copy:
+    dest: "{{ headscale_db_path }}"
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    content: ""
+    mode: 0770
+    force: false
+
+- name: Set headscale config.yaml.
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ headscale_etc_dir_path }}/config.yaml"
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0660
+  notify: restart service
+
+- name: Create Headscale Systemd Unit File.
+  ansible.builtin.template:
+    src: headscale.service.j2
+    dest: /etc/systemd/system/headscale.service
+    owner: root
+    group: root
+    mode: 0655
+  notify: enable service
+
+- name: Ensure Headscale is running.
+  ansible.builtin.systemd:
+    name: headscale.service
+    state: started
+
+- name: Check that we can connect to the metrics endpoint.
+  ansible.builtin.uri:
+    url: "http://{{ headscale_metrics_listen_addr }}/metrics"
+    body_format: json
+  register: headscale_metrics
+  until: headscale_metrics.status == 200
+  retries: 5
