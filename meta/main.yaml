@@ -15,12 +15,10 @@ galaxy_info:
         - 8
     - name: Debian
       versions:
-        - 10
-        - 11
+        - all
     - name: Ubuntu
       versions:
-        - 22.04
-        - 20.04
+        - all
   galaxy_tags:
     - headscale
     - tailscale
