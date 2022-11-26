@@ -6,6 +6,9 @@ name: CI
   push:
     branches:
       - main
+defaults:
+  run:
+    working-directory: 'hampusstrom.headscale'
 jobs:
   molecule:
     name: Molecule
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v2
+        with:
+          path: 'hampusstrom.headscale'
 
       - name: Set up Python3.
         uses: actions/setup-python@v2
