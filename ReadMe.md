@@ -96,10 +96,15 @@ Will be created if it not already exists.
 
 default: `headscale`
 
-#### **headscale_user_id**
+#### **headscale_user_uid**
 Defines the user ID of the `headscale_user_name` user.
 
-default: `1111`
+default: `777`
+
+#### **headscale_user_gid**
+Defines the user ID of the `headscale_user_name` user.
+
+default: `777`
 
 #### **headscale_etc_dir_path**
 
@@ -146,8 +151,7 @@ headscale_listen_addr: 0.0.0.0:443
 
 # When using the 'latest' tag,
 # the role will automatically try to get the latest release tag from GitHub repo juanfont/Headscale
-# this is not always going to work like when the authors release a new beta version,
-# and if you run this role a lot you might hit the GitHub API rate limit
+# this is not always going to work like when the authors release a new beta version and tags it improperly.
 # if you want stability I recommend tagging a specific release version, without the 'v' prefix.
 # I.e. 'v0.16.4' should be defined as '0.16.4'
 # headscale_version: 0.16.4
