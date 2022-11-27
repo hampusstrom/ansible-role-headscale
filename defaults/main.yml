@@ -9,9 +9,20 @@ headscale_version: latest
 
 headscale_github_repository: juanfont/headscale
 
+# This role makes use of the GitHub API.
+# The GitHub API is rate-limited.
+# Unauthenticated users are only allowed to make 60 request per hour.
+# If you are a developer, you may be hitting this limit easily.
+# To workaround this you can retrieve a Personal Access Token from:
+# https://github.com/settings/tokens/new
+# Fill in the access token details in the headscale_github_api_* variables.
+
+# Github username
 headscale_github_api_username:
+# Github user password
 headscale_github_api_password:
-headscale_github_api_auth:
+# If we should authenticate or not. True/False
+headscale_github_api_auth: 
 
 # Where the downloaded binary should be put
 headscale_binary_path: /usr/local/bin/headscale

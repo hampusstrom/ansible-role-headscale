@@ -39,6 +39,26 @@ git clone https://github.com/hampusstrom/ansible-role-headscale.git /etc/ansible
 
 ## Requirements
 This role has no out-of-the-ordinary requirements and should work anywhere that ansible, headscale and systemd runs.
+
+### GitHub API
+This role makes use of the GitHub API.
+
+The GitHub API is rate-limited.
+
+Unauthenticated users are only allowed to make 60 request per hour.
+
+If you are a developer, you may be hitting this limit easily.
+
+To workaround this you can retrieve a Personal Access Token from: https://github.com/settings/tokens/new
+
+Fill in the access token details in the headscale_github_api_* variables.
+
+`headscale_github_api_username: user`
+
+`headscale_github_api_password: password`
+
+`headscale_github_api_auth: true`
+
 ### Init system(s): **systemd**
 ### Root required: **yes**
 Since we require root, use this role in a playbook that has `become:yes` globally defined or call this role using the `become: yes` keyword.
@@ -82,7 +102,14 @@ default: `latest`
 Defines the user/repo to use when looking for and downloading the headscale binary.
 Can be changed to another repo to allow installations of forks for example.
 
-default:`juanfont/headscale`
+default: `juanfont/headscale`
+
+#### **headscale_namespaces**
+A list of namespaces that should be created when this role runs.
+
+By default a single namespace called 'default' is created.
+
+default: `default`
 
 #### **headscale_binary_path**
 
