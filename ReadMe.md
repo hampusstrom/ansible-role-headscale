@@ -197,5 +197,15 @@ headscale_acme_email: admin@example.com
 headscale_tls_letsencrypt_hostname: headscale.example.com
 ```
 
+## Tags
+### install
+A complete installation and configuration of headscale.
+
+### configure
+Only updates the configuration file and/or systemd unit file.
+
+### namespace
+Only configures namespaces.
+
 ## License
 MIT / BSD [License](LICENSE)
