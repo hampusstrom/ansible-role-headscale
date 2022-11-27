@@ -26,6 +26,9 @@ headscale_user_name: headscale
 # The uid of the user.
 headscale_user_uid: 1111
 
+# The group id of the user.
+headscale_user_gid: 1111
+
 # Everything below this point is builtin headscale settings from the default configuration file.
 
 headscale_server_url: https://headscale.example.com:8080

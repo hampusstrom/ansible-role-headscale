@@ -54,6 +54,7 @@
   ansible.builtin.user:
     name: "{{ headscale_user_name }}"
     uid: "{{ headscale_user_uid }}"
+    group: "{{ headscale_user_gid }}"
     system: true
     shell: /usr/bin/nologin
     home: "{{ headscale_lib_dir_path }}"
