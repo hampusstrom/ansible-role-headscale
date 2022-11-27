@@ -49,7 +49,7 @@ Unauthenticated users are only allowed to make 60 request per hour.
 
 If you are a developer, you may be hitting this limit easily.
 
-To workaround this you can retrieve a Personal Access Token from: https://github.com/settings/tokens/new
+To work around this you can retrieve a Personal Access Token from: https://github.com/settings/tokens/new
 
 Fill in the access token details in the headscale_github_api_* variables.
 
