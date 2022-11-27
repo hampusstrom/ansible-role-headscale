@@ -18,14 +18,18 @@ headscale_github_repository: juanfont/headscale
 # Fill in the access token details in the headscale_github_api_* variables.
 
 # Github username
-headscale_github_api_username:
+headscale_github_api_username: null
 # Github user password
-headscale_github_api_password:
+headscale_github_api_password: null
 # If we should authenticate or not. True/False
-headscale_github_api_auth: 
+headscale_github_api_auth: false
 
 # Where the downloaded binary should be put
 headscale_binary_path: /usr/local/bin/headscale
+
+# If set to true, any namespace not specified in headscale_namespaces will be permanently deleted.
+# Use this if you want your playbooks to be the source of truth for your headscale instance.
+headscale_remove_unmanaged_namespaces: false
 
 # namespaces that should exist.
 headscale_namespaces:

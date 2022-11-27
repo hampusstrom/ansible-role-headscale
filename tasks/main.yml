@@ -124,7 +124,7 @@
   until: headscale_metrics.status == 200
   retries: 10
 
-- name: Create namespaces.
+- name: Configure namespaces.
   ansible.builtin.include_tasks:
     file: namespaces.yml
   when: headscale_namespaces is defined and headscale_namespaces != 'None'
