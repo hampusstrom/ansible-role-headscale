@@ -53,9 +53,9 @@ To workaround this you can retrieve a Personal Access Token from: https://github
 
 Fill in the access token details in the headscale_github_api_* variables.
 
-`headscale_github_api_username: user`
+`headscale_github_api_username: your_github_login_username`
 
-`headscale_github_api_password: password`
+`headscale_github_api_password: your_personal_access_token`
 
 `headscale_github_api_auth: true`
 
