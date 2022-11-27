@@ -1,116 +1,17 @@
 ---
 
-- block:
-  - name: Determine latest headscale GitHub release tag.
-    delegate_to: localhost
-    become: false
-    ansible.builtin.uri:
-      url: "https://api.github.com/repos/{{ headscale_github_repository }}/releases/latest"
-      url_username: "{{ headscale_github_api_username | default (omit) }}"
-      url_password: "{{ headscale_github_api_password | default (omit) }}"
-      force_basic_auth: "{{ headscale_github_api_auth | default (omit) }}"
-      body_format: json
-    register: github_release
-    until: github_release.status == 200
-    retries: 5
+- name: Install headscale.
+  ansible.builtin.include_tasks:
+    file: install.yml
+  tags:
+    - install
 
-  - name: Set headscale_version (without 'v' prefix).
-    ansible.builtin.set_fact:
-      headscale_version: "{{ github_release.json.tag_name
-        | regex_replace('^v?(.*)$', '\\1') | trim }}"
-
-  - name: Print latest headscale version.
-    ansible.builtin.debug:
-      msg: "{{ github_release.json.tag_name }}"
-
-  when: (headscale_version is not defined) or (headscale_version == 'latest')
-  run_once: true
-
-- name: Get OS Architecture.
-  ansible.builtin.set_fact:
-    os_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
-
-- name: Get Linux/Darwin.
-  ansible.builtin.shell:
-    cmd: |
-      uname
-  changed_when: false
-  register: uname_result
-
-# base releases url/version tag/filename
-- name: Download latest headscale release for our architecture.
-  ansible.builtin.get_url:
-    url: "https://github.com/{{ headscale_github_repository }}/releases/download/\
-          v{{ headscale_version }}/\
-          headscale_{{ headscale_version }}_{{ uname_result.stdout }}_{{ os_architecture }}"
-    dest: "{{ headscale_binary_path }}"
-    owner: root
-    group: root
-    mode: 0655
-  notify: restart service
-
-- name: "Create group {{ headscale_user_name }}."
-  ansible.builtin.group:
-    name: "{{ headscale_user_name }}"
-    gid: "{{ headscale_user_gid }}"
-    state: present
-
-- name: "Create user {{ headscale_user_name }}."
-  ansible.builtin.user:
-    name: "{{ headscale_user_name }}"
-    uid: "{{ headscale_user_uid }}"
-    group: "{{ headscale_user_name }}"
-    system: true
-    shell: /usr/bin/nologin
-    home: "{{ headscale_lib_dir_path }}"
-    state: present
-    create_home: true
-
-- name: "Create {{ headscale_lib_dir_path }} directory."
-  ansible.builtin.file:
-    path: "{{ headscale_lib_dir_path }}"
-    state: directory
-    owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
-    mode: 0770
-
-- name: "Create {{ headscale_etc_dir_path }} directory."
-  ansible.builtin.file:
-    path: "{{ headscale_etc_dir_path }}"
-    state: directory
-    owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
-    mode: 0770
-
-- name: "Create {{ headscale_db_path }}."
-  ansible.builtin.copy:
-    dest: "{{ headscale_db_path }}"
-    owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
-    content: ""
-    mode: 0770
-    force: false
-
-- name: Create Headscale Systemd Unit File.
-  ansible.builtin.template:
-    src: headscale.service.j2
-    dest: /etc/systemd/system/headscale.service
-    owner: root
-    group: root
-    mode: 0655
-  notify: enable service
-
-- name: Set headscale config.yaml.
-  ansible.builtin.template:
-    src: config.yaml.j2
-    dest: "{{ headscale_etc_dir_path }}/config.yaml"
-    owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
-    mode: 0660
-  notify: restart service
-
-- name: Flush handlers.
-  ansible.builtin.meta: flush_handlers
+- name: Configure headscale.
+  ansible.builtin.include_tasks:
+    file: configure.yml
+  tags:
+    - install
+    - configure
 
 - name: Check that we can connect to the metrics endpoint.
   ansible.builtin.uri:
@@ -124,3 +25,6 @@
   ansible.builtin.include_tasks:
     file: namespaces.yml
   when: headscale_namespaces is defined and headscale_namespaces != 'None'
+  tags:
+    - install
+    - namespace

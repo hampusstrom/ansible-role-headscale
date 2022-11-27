@@ -1,0 +1,21 @@
+---
+- name: Create Headscale Systemd Unit File.
+  ansible.builtin.template:
+    src: headscale.service.j2
+    dest: /etc/systemd/system/headscale.service
+    owner: root
+    group: root
+    mode: 0655
+  notify: enable service
+
+- name: Set headscale config.yaml.
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ headscale_etc_dir_path }}/config.yaml"
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0660
+  notify: restart service
+
+- name: Flush handlers.
+  ansible.builtin.meta: flush_handlers
