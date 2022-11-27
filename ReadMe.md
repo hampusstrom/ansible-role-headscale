@@ -199,7 +199,7 @@ headscale_tls_letsencrypt_hostname: headscale.example.com
 
 ## Tags
 ### install
-A complete installation and configuration of headscale.
+A complete installation and configuration of headscale and its namespaces.
 
 ### configure
 Only updates the configuration file and/or systemd unit file.
