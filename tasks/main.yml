@@ -26,10 +26,6 @@
   when: (headscale_version is not defined) or (headscale_version == 'latest')
   run_once: true
 
-- name: Set DPKG architecture
-  ansible.builtin.set_fact:
-    dpkg_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
-
 - name: Get OS Architecture.
   ansible.builtin.set_fact:
     os_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
