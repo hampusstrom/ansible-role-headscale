@@ -6,6 +6,9 @@
     become: false
     ansible.builtin.uri:
       url: "https://api.github.com/repos/{{ headscale_github_repository }}/releases/latest"
+      url_username: "{{ headscale_github_api_username | default (omit) }}"
+      url_password: "{{ headscale_github_api_password | default (omit) }}"
+      force_basic_auth: "{{ headscale_github_api_auth | default (omit) }}"
       body_format: json
     register: github_release
     until: github_release.status == 200

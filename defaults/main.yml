@@ -8,6 +8,11 @@
 headscale_version: latest
 
 headscale_github_repository: juanfont/headscale
+
+headscale_github_api_username:
+headscale_github_api_password:
+headscale_github_api_auth:
+
 # Where the downloaded binary should be put
 headscale_binary_path: /usr/local/bin/headscale
 
