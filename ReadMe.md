@@ -104,6 +104,13 @@ Can be changed to another repo to allow installations of forks for example.
 
 default: `juanfont/headscale`
 
+#### **headscale_remove_unmanaged_namespaces**
+If set to true any namespaces not specified in headscale_namespaces will be permanently deleted.
+
+**Use at your own risk**
+
+default: `false`
+
 #### **headscale_namespaces**
 A list of namespaces that should be created when this role runs.
 
