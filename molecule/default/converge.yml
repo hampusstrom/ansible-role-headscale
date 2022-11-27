@@ -1,7 +1,5 @@
 ---
 - name: Converge
   hosts: all
-  tasks:
-    - name: "Include headscale"
-      include_role:
-        name: "headscale"
+  roles:
+    - role: hampusstrom.headscale

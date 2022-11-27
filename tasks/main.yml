@@ -1,9 +1,4 @@
 ---
-- name: Stop headscale service if it already exists.
-  ansible.builtin.systemd:
-    name: headscale.service
-    state: stopped
-  ignore_errors: true
 
 - block:
   - name: Determine latest headscale GitHub release tag.
@@ -29,11 +24,11 @@
   run_once: true
 
 - name: Set DPKG architecture
-  set_fact:
+  ansible.builtin.set_fact:
     dpkg_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
 
 - name: Get OS Architecture.
-  set_fact:
+  ansible.builtin.set_fact:
     os_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
 
 - name: Get Linux/Darwin.
@@ -90,15 +85,6 @@
     mode: 0770
     force: false
 
-- name: Set headscale config.yaml.
-  ansible.builtin.template:
-    src: config.yaml.j2
-    dest: "{{ headscale_etc_dir_path }}/config.yaml"
-    owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
-    mode: 0660
-  notify: restart service
-
 - name: Create Headscale Systemd Unit File.
   ansible.builtin.template:
     src: headscale.service.j2
@@ -108,10 +94,17 @@
     mode: 0655
   notify: enable service
 
-- name: Ensure Headscale is running.
-  ansible.builtin.systemd:
-    name: headscale.service
-    state: started
+- name: Set headscale config.yaml.
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ headscale_etc_dir_path }}/config.yaml"
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0660
+  notify: restart service
+
+- name: Flush handlers.
+  ansible.builtin.meta: flush_handlers
 
 - name: Check that we can connect to the metrics endpoint.
   ansible.builtin.uri:
@@ -119,4 +112,4 @@
     body_format: json
   register: headscale_metrics
   until: headscale_metrics.status == 200
-  retries: 5
+  retries: 10

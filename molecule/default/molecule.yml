@@ -1,4 +1,5 @@
 ---
+role_name_check: 1
 dependency:
   name: galaxy
 driver:
@@ -11,7 +12,7 @@ platforms:
 # are required to test systemd related tasks
 # since docker switched to cgroups v2.
 # https://www.jeffgeerling.com/blog/2022/docker-and-systemd-getting-rid-dreaded-failed-connect-bus-error
-  - name: centos8
+  - name: instance
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos8}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
@@ -20,8 +21,9 @@ platforms:
     privileged: true
     pre_build_image: true
     cgroupns_mode: host
-
 provisioner:
   name: ansible
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
 verifier:
   name: ansible
