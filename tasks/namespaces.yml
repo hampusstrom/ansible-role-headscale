@@ -1,0 +1,7 @@
+---
+- name: Ensure namespaces exist.
+  ansible.builtin.command:
+    cmd: "{{ headscale_binary_path }} namespaces create {{ item }}"
+  with_items: "{{ headscale_namespaces }}"
+  register: namespace_created
+  changed_when: "'Namespace created' in namespace_created.stdout"

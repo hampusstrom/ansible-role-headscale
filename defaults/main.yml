@@ -11,6 +11,10 @@ headscale_github_repository: juanfont/headscale
 # Where the downloaded binary should be put
 headscale_binary_path: /usr/local/bin/headscale
 
+# namespaces that should exist.
+headscale_namespaces:
+  - default
+
 # Path for the etc-directory.
 headscale_etc_dir_path: /etc/headscale
 

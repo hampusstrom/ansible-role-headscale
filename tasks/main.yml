@@ -50,11 +50,17 @@
     mode: 0655
   notify: restart service
 
+- name: "Create group {{ headscale_user_name }}."
+  ansible.builtin.group:
+    name: "{{ headscale_user_name }}"
+    gid: "{{ headscale_user_gid }}"
+    state: present
+
 - name: "Create user {{ headscale_user_name }}."
   ansible.builtin.user:
     name: "{{ headscale_user_name }}"
     uid: "{{ headscale_user_uid }}"
-    group: "{{ headscale_user_gid }}"
+    group: "{{ headscale_user_name }}"
     system: true
     shell: /usr/bin/nologin
     home: "{{ headscale_lib_dir_path }}"
@@ -114,3 +120,8 @@
   register: headscale_metrics
   until: headscale_metrics.status == 200
   retries: 10
+
+- name: Create namespaces.
+  ansible.builtin.include_tasks:
+    file: namespaces.yml
+  when: headscale_namespaces is defined and headscale_namespaces != 'None'
