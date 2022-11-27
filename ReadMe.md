@@ -1,4 +1,6 @@
 # Ansible Role: Headscale
+![CI](https://github.com/hampusstrom/ansible-role-headscale/actions/workflows/ci.yml/badge.svg)
+
 An ansible role to install and configure Headscale, An open source, self-hosted implementation of the Tailscale control server.
 
 It's awesome, check it out: [juanfont/Headscale](https://github.com/juanfont/headscale)
