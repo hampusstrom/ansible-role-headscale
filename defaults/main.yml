@@ -24,10 +24,10 @@ headscale_run_dir_path: /var/run/headscale
 headscale_user_name: headscale
 
 # The uid of the user.
-headscale_user_uid: 1111
+headscale_user_uid: 777
 
 # The group id of the user.
-headscale_user_gid: 1111
+headscale_user_gid: 777
 
 # Everything below this point is builtin headscale settings from the default configuration file.
 
