@@ -25,9 +25,20 @@
   when: (headscale_version is not defined) or (headscale_version == 'latest')
   run_once: true
 
-- name: Get OS Architecture.
+- name: Set OS Architecture amd64.
   ansible.builtin.set_fact:
-    os_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    os_architecture: 'amd64'
+  when: ansible_architecture == 'x86_64'
+
+- name: Set OS Architecture arm64.
+  ansible.builtin.set_fact:
+    os_architecture: 'arm64'
+  when: ansible_architecture == 'aarch64'
+
+- name: Set OS Architecture Others.
+  ansible.builtin.set_fact:
+    os_architecture: "{{ ansible_architecture }}"
+  when: ansible_architecture != 'aarch64' and ansible_architecture != 'x86_64'
 
 - name: Get Linux/Darwin.
   ansible.builtin.shell:
