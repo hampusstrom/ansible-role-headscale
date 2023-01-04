@@ -208,4 +208,4 @@ Only updates the configuration file and/or systemd unit file.
 Only configures namespaces.
 
 ## License
-MIT / BSD [License](LICENSE)
+MIT  [License](LICENSE)
