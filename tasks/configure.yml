@@ -5,7 +5,7 @@
     dest: /etc/systemd/system/headscale.service
     owner: root
     group: root
-    mode: 0655
+    mode: 0644
   notify: enable service
 
 - name: Set headscale config.yaml.
