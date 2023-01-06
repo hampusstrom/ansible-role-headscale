@@ -1,5 +1,4 @@
 ---
-
 - name: Get Current Namespaces json.
   ansible.builtin.command:
     cmd: "{{ headscale_binary_path }} namespace list -o json-line"

@@ -201,7 +201,6 @@ Simplified:
 
 ```yaml
 ---
-
 - hosts: all
   become: yes
   vars:
