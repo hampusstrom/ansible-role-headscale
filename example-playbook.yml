@@ -1,0 +1,13 @@
+---
+# Run with command:
+# ansible-playbook- i "yourinventoryfile" -K example-playbook.yml
+- hosts: all
+  become: yes
+  vars:
+    headscale_version: latest
+    headscale_acme_email: admin@example.com
+    headscale_tls_letsencrypt_hostname: headscale.example.com
+    headscale_server_url: https://headscale.example.com:443
+    headscale_listen_addr: 0.0.0.0:443
+  roles:
+    - hampusstrom.headscale
