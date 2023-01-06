@@ -197,6 +197,23 @@ headscale_acme_email: admin@example.com
 headscale_tls_letsencrypt_hostname: headscale.example.com
 ```
 
+Simplified:
+
+```yaml
+---
+
+- hosts: all
+  become: yes
+  vars:
+    headscale_version: latest
+    headscale_acme_email: admin@example.com
+    headscale_tls_letsencrypt_hostname: headscale.example.com
+    headscale_server_url: https://headscale.example.com:443
+    headscale_listen_addr: 0.0.0.0:443
+  roles:
+    - hampusstrom.headscale
+```
+
 ## Tags
 ### install
 A complete installation and configuration of headscale and its namespaces.
