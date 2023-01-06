@@ -22,7 +22,7 @@ listen_addr: {{ headscale_listen_addr }}
 # to keep this endpoint private to your internal
 # network
 #
-metrics_listen_addr: {{ headscale_metrics_listen_addr}}
+metrics_listen_addr: {{ headscale_metrics_listen_addr }}
 
 # Address to listen for gRPC.
 # gRPC is used for controlling a headscale server
@@ -38,7 +38,7 @@ grpc_listen_addr: {{ headscale_grpc_listen_addr }}
 # mode. This is not recommended as the traffic will
 # be unencrypted. Only enable if you know what you
 # are doing.
-grpc_allow_insecure: {{ headscale_grpc_allow_insecure }}
+grpc_allow_insecure: {{ headscale_grpc_allow_insecure | lower }}
 
 # Private key used to encrypt the traffic between headscale
 # and Tailscale clients.
@@ -78,7 +78,7 @@ derp:
   server:
     # If enabled, runs the embedded DERP server and merges it into the rest of the DERP config
     # The Headscale server_url defined above MUST be using https, DERP requires TLS to be in place
-    enabled: {{ headscale_derp_server_enabled }}
+    enabled: {{ headscale_derp_server_enabled | lower }}
 
     # Region ID to use for the embedded DERP server.
     # The local DERP prevails if the region ID collides with other region ID coming from
@@ -121,13 +121,13 @@ derp:
   # If enabled, a worker will be set up to periodically
   # refresh the given sources and update the derpmap
   # will be set up.
-  auto_update_enabled: {{ headscale_derp_auto_update_enabled }}
+  auto_update_enabled: {{ headscale_derp_auto_update_enabled | lower }}
 
   # How often should we check for DERP updates?
   update_frequency: {{ headscale_derp_update_frequency }}
 
 # Disables the automatic check for headscale updates on startup
-disable_check_updates: {{ headscale_disable_check_updates }}
+disable_check_updates: {{ headscale_disable_check_updates | lower }}
 
 # Time before an inactive ephemeral node is deleted?
 ephemeral_node_inactivity_timeout: {{ headscale_ephemeral_inactivity_timeout }}
@@ -215,7 +215,7 @@ acl_policy_path: "{{ headscale_acl_policy_path }}"
 #
 dns_config:
   # Whether to prefer using Headscale provided DNS or use local.
-  override_local_dns: {{ headscale_dns_config_override_local_dns }}
+  override_local_dns: {{ headscale_dns_config_override_local_dns | lower }}
 
   # List of DNS servers to expose to clients.
   nameservers:
@@ -259,7 +259,7 @@ dns_config:
 
   # Whether to use [MagicDNS](https://tailscale.com/kb/1081/magicdns/).
   # Only works if there is at least a nameserver defined.
-  magic_dns: {{ headscale_dns_config_magic_dns }}
+  magic_dns: {{ headscale_dns_config_magic_dns | lower }}
 
   # Defines the base domain to create the hostnames for MagicDNS.
   # `base_domain` must be a FQDNs, without the trailing dot.
@@ -339,9 +339,9 @@ logtail:
   # Enable logtail for this headscales clients.
   # As there is currently no support for overriding the log server in headscale, this is
   # disabled by default. Enabling this will make your clients send logs to Tailscale Inc.
-  enabled: {{ headscale_logtail_enabled }}
+  enabled: {{ headscale_logtail_enabled | lower }}
 
 # Enabling this option makes devices prefer a random port for WireGuard traffic over the
 # default static port 41641. This option is intended as a workaround for some buggy
 # firewall devices. See https://tailscale.com/kb/1181/firewalls/ for more information.
-randomize_client_port: {{ headscale_randomize_client_port }}
+randomize_client_port: {{ headscale_randomize_client_port | lower }}
