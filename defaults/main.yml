@@ -7,6 +7,8 @@
 # I.e. 'v0.16.4' should be defined as '0.16.4'
 headscale_version: latest
 
+headscale_allow_downgrade: false
+
 headscale_github_repository: juanfont/headscale
 
 # This role makes use of the GitHub API.
