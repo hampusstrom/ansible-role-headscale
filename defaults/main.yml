@@ -44,6 +44,9 @@ headscale_lib_dir_path: /var/lib/headscale
 # Path for the run directory.
 headscale_run_dir_path: /var/run/headscale
 
+# Directory where temporary files will be stored.
+headscale_tmp_dir_path: /tmp
+
 # Name of the user who will run headscale as a daemon. (User will be created if not present)
 headscale_user_name: headscale
 
