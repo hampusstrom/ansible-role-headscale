@@ -1,4 +1,27 @@
 ---
 
-- debug:
-    msg: "I would have tried to upgrade."
+- name: Stop headscale service.
+  ansible.builtin.service:
+    name: headscale.service
+    state: stopped
+
+- name: Ensure headscale_backup_dir_path exists.
+  ansible.builtin.file:
+    state: directory
+    path: "{{ headscale_backup_dir_path }}"
+    mode: 0770
+    owner: "{{ headscale_user_uid }}"
+    group:  "{{ headscale_user_gid }}"
+
+- name: Backup database.
+  ansible.builtin.copy:
+    src: "{{ headscale_db_path }}"
+    dest: "{{ headscale_lib_dir_path }}/backups/db-{{ headscale_installed_version }}-{{ ansible_date_time.iso8601 }}.sqlite"
+    mode: 0660
+    owner: "{{ headscale_user_uid }}"
+    group:  "{{ headscale_user_gid }}"
+    remote_src:  true
+
+- name: "Perform upgrade."
+  ansible.builtin.include_tasks:
+    file: install.yml

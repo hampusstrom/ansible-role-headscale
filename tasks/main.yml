@@ -16,7 +16,7 @@
     - install
   when: not headscale_installed
 
-- name: Upgrade headscale if required.
+- name: Upgrade headscale.
   ansible.builtin.include_tasks:
     file: upgrade.yml
   tags:

@@ -23,7 +23,7 @@
   register: uname_result
 
 # base releases url/version tag/filename
-- name: Download latest headscale release for our architecture.
+- name: Download headscale release for our architecture.
   ansible.builtin.get_url:
     url: "https://github.com/{{ headscale_github_repository }}/releases/download/\
           v{{ headscale_version }}/\
@@ -32,6 +32,7 @@
     owner: root
     group: root
     mode: 0655
+    force:  true
   notify: restart service
 
 - name: "Create group {{ headscale_user_name }}."
