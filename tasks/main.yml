@@ -1,40 +1,34 @@
 ---
 
-- name: Get Current headscale already installed.
-  ansible.builtin.stat:
-    path: "{{ headscale_binary_path }}"
-  register: headscale_installed 
-
-- name: "Get current headscale version."
-  block:
-    - name: "Get headscale version by command."
-      ansible.builtin.command:
-        "{{ headscale_binary_path }} version"
-      register: headscale_version_output
-      changed_when: false
-      failed_when: headscale_version_output.rc != 0
-
-    - name: "Set headscale_installed_version."
-      ansible.builtin.set_fact:
-        headscale_installed_version: "{{ headscale_version_output.stdout_lines | regex_replace('^v?(.*)$', '\\1') | trim }}"
-
-    - name: Print installed headscale version.
-      ansible.builtin.debug:
-        msg: "{{ headscale_installed_version }}"
-  
-  when: headscale_installed.stat.exists
+- name: Do version check.
+  ansible.builtin.include_tasks:
+    file: version-check.yml
+  tags:
+    - install
+    - upgrade
+    - configure
+    - namespace
 
 - name: Install headscale.
   ansible.builtin.include_tasks:
     file: install.yml
   tags:
     - install
+  when: not headscale_installed
+
+- name: Upgrade headscale if required.
+  ansible.builtin.include_tasks:
+    file: upgrade.yml
+  tags:
+    - upgrade
+  when: headscale_upgrade_required
 
 - name: Configure headscale.
   ansible.builtin.include_tasks:
     file: configure.yml
   tags:
     - install
+    - upgrade
     - configure
 
 - name: Check that we can connect to the metrics endpoint.

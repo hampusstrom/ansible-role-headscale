@@ -1,7 +1,12 @@
 ---
+
+- name: Set headscale_namespace_command.
+  ansible.builtin.set_fact:
+    headscale_namespace_command: "{% if headscale_version is version('0.19.0', '>=') %}users{% else %}namespaces{% endif %}"
+
 - name: Get Current Namespaces json.
   ansible.builtin.command:
-    cmd: "{{ headscale_binary_path }} namespace list -o json-line"
+    cmd: "{{ headscale_binary_path }} {{ headscale_namespace_command }} list -o json-line"
   register: current_namespaces_json
   changed_when: false
   failed_when: current_namespaces_json.rc != 127 and current_namespaces_json.rc != 0
@@ -39,7 +44,7 @@
 
 - name: Create missing namespaces.
   ansible.builtin.command:
-    cmd: "{{ headscale_binary_path }} namespaces create {{ item }}"
+    cmd: "{{ headscale_binary_path }} {{ headscale_namespace_command }} create {{ item }}"
   with_items: "{{ namespaces_to_create }}"
   register: namespace_created
   changed_when: "'Namespace created' in namespace_created.stdout"

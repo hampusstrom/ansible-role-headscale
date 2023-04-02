@@ -1,0 +1,67 @@
+---
+
+- name: Get stat headscale to check if already installed.
+  ansible.builtin.stat:
+    path: "{{ headscale_binary_path }}"
+  register: headscale_installed_stat
+
+- name: Set headscale_installed.
+  ansible.builtin.set_fact:
+    headscale_installed: "{{ headscale_installed_stat.stat.exists }}"
+
+- name: "Get currently installed headscale version."
+  block:
+    - name: "Get headscale version by command."
+      ansible.builtin.command:
+        "{{ headscale_binary_path }} version"
+      register: headscale_version_output
+      changed_when: false
+      failed_when: headscale_version_output.rc != 0
+
+    - name: "Set headscale_installed_version."
+      ansible.builtin.set_fact:
+        headscale_installed_version: "{{ headscale_version_output.stdout | regex_replace('^v?(.*)$', '\\1') | trim }}"
+  
+  when: headscale_installed
+
+- block:
+  - name: Determine latest headscale GitHub release tag.
+    delegate_to: localhost
+    become: false
+    ansible.builtin.uri:
+      url: "https://api.github.com/repos/{{ headscale_github_repository }}/releases/latest"
+      url_username: "{{ headscale_github_api_username | default (omit) }}"
+      url_password: "{{ headscale_github_api_password | default (omit) }}"
+      force_basic_auth: "{{ headscale_github_api_auth | default (omit) }}"
+      body_format: json
+    register: github_release
+    until: github_release.status == 200
+    retries: 5
+
+  - name: Set headscale_version (without 'v' prefix).
+    ansible.builtin.set_fact:
+      headscale_version: "{{ github_release.json.tag_name | regex_replace('^v?(.*)$', '\\1') | trim }}"
+
+  - name: Print latest headscale version.
+    ansible.builtin.debug:
+      msg: "{{ github_release.json.tag_name }}"
+
+  when: (headscale_version is not defined) or (headscale_version == 'latest')
+  run_once: true
+
+- name: Print wanted headscale_version.
+  ansible.builtin.debug:
+    var: headscale_version
+
+- name: Print current headscale_installed_version.
+  ansible.builtin.debug:
+    var: headscale_installed_version
+
+- name: Set headscale_upgrade_required.
+  ansible.builtin.set_fact:
+    headscale_upgrade_required: "{% if headscale_installed_version is version(headscale_version, 'lt') %}true{% else %}false{% endif %}"
+  when: headscale_installed_version is defined
+
+- name: Print headscale_upgrade_required.
+  ansible.builtin.debug:
+    var: headscale_upgrade_required

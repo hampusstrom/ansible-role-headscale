@@ -1,29 +1,4 @@
 ---
-- block:
-  - name: Determine latest headscale GitHub release tag.
-    delegate_to: localhost
-    become: false
-    ansible.builtin.uri:
-      url: "https://api.github.com/repos/{{ headscale_github_repository }}/releases/latest"
-      url_username: "{{ headscale_github_api_username | default (omit) }}"
-      url_password: "{{ headscale_github_api_password | default (omit) }}"
-      force_basic_auth: "{{ headscale_github_api_auth | default (omit) }}"
-      body_format: json
-    register: github_release
-    until: github_release.status == 200
-    retries: 5
-
-  - name: Set headscale_version (without 'v' prefix).
-    ansible.builtin.set_fact:
-      headscale_version: "{{ github_release.json.tag_name
-        | regex_replace('^v?(.*)$', '\\1') | trim }}"
-
-  - name: Print latest headscale version.
-    ansible.builtin.debug:
-      msg: "{{ github_release.json.tag_name }}"
-
-  when: (headscale_version is not defined) or (headscale_version == 'latest')
-  run_once: true
 
 - name: Set OS Architecture amd64.
   ansible.builtin.set_fact:
