@@ -57,12 +57,12 @@
   ansible.builtin.debug:
     var: headscale_installed_version
 
-- name: Set headscale_upgrade_required (headscale installed).
+- name: Set headscale_upgrade_required=true (headscale installed).
   ansible.builtin.set_fact:
-    headscale_upgrade_required: "{% if headscale_installed_version is version(headscale_version, 'lt') %}true{% else %}false{% endif %}"
+    headscale_upgrade_required: "{% if headscale_installed_version is version(headscale_version, 'lt') %}true{% elif headscale_installed_version is version(headscale_version, 'gt') and headscale_allow_downgrade %}true{% else %}false{% endif %}"
   when: headscale_installed
 
-- name: "Set headscale_upgrade_required (headscaled not installed)."
+- name: "Set headscale_upgrade_required=false (headscaled not installed)."
   ansible.builtin.set_fact:
     headscale_upgrade_required: false
   when: not headscale_installed
