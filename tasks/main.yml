@@ -31,14 +31,6 @@
     - upgrade
     - configure
 
-- name: Check that we can connect to headscale endpoint.
-  ansible.builtin.uri:
-    url: "{{ headscale_config.server_url | default('http://127.0.0.1:8080') }}"
-    body_format: json
-  register: headscale_endpoint
-  until: headscale_endpoint.status == 200
-  retries: 10
-
 - name: Configure users.
   ansible.builtin.include_tasks:
     file: users.yml
