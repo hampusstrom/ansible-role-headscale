@@ -55,8 +55,6 @@ headscale_user_uid: 777
 # The group id of the user.
 headscale_user_gid: "{{ headscale_user_uid }}"
 
-
-
 # The user/repo github url to look for headscale releases in.
 # defaults to the official juanfont/headscale repo. 
 headscale_github_repository: juanfont/headscale
