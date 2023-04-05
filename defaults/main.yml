@@ -22,7 +22,7 @@ headscale_acl: {}
 
 # If set to true, any namespace not specified in headscale_namespaces will be permanently deleted.
 # Use this if you want your playbooks to be the source of truth for your headscale instance.
-headscale_remove_unmanaged_namespaces: false
+headscale_remove_unmanaged_users: false
 
 # users that should be created if they don't already exist.
 # Example 
