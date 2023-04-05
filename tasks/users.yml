@@ -2,50 +2,50 @@
 
 - name: Set headscale_user_command.
   ansible.builtin.set_fact:
-    headscale_user_command: "{% if headscale_version is version('0.19.0', '>=') %}users{% else %}namespaces{% endif %}"
+    headscale_user_command: "{% if headscale_version is version('0.19.0', '>=') %}users{% else %}users{% endif %}"
 
-- name: Get Current Namespaces json.
+- name: Get Current users json.
   ansible.builtin.command:
     cmd: "{{ headscale_binary_path }} {{ headscale_user_command }} list -o json-line"
   register: current_users_json
   changed_when: false
   failed_when: current_users_json.rc != 127 and current_users_json.rc != 0
 
-- name: Parse current namespace names.
+- name: Parse current user names.
   ansible.builtin.set_fact:
     current_users: "{{ current_users_json.stdout | from_json | json_query('[*].name') }}"
   when: current_users_json.stdout != 'null'
 
-- name: Set already existing namespaces.
+- name: Set already existing users.
   ansible.builtin.set_fact:
     existing_users: "{{ headscale_users | intersect(current_users) }}"
   when: current_users is defined
 
-- name: Set namespaces to remove.
+- name: Set users to remove.
   ansible.builtin.set_fact:
-    namespaces_to_remove: "{{ current_users | difference(existing_users) }}"
+    users_to_remove: "{{ current_users | difference(existing_users) }}"
   when: existing_users is defined and existing_users != 'None' and headscale_remove_unmanaged_users
 
-- name: Ensure no namepaces exist except the ones we've defined.
+- name: Ensure no users exist except the ones we've defined.
   ansible.builtin.command:
-    cmd: "{{ headscale_binary_path }} namespace destroy --force '{{ item }}'"
-  with_items: "{{ namespaces_to_remove }}"
-  when: namespaces_to_remove is defined and namespaces_to_remove != 'None' and headscale_remove_unmanaged_users
+    cmd: "{{ headscale_binary_path }} {{ headscale_user_command }} destroy --force '{{ item }}'"
+  with_items: "{{ users_to_remove }}"
+  when: users_to_remove is defined and users_to_remove != 'None' and headscale_remove_unmanaged_users
 
-- name: Set namespaces_to_create if existing_users is defined.
+- name: Set users_to_create if existing_users is defined.
   ansible.builtin.set_fact:
-    namespaces_to_create: "{{ headscale_users | difference(existing_users) }}"
+    users_to_create: "{{ headscale_users | difference(existing_users) }}"
   when: existing_users is defined and existing_users != headscale_users
 
-- name: Set namespaces_to_create if existing_users is not defined.
+- name: Set users_to_create if existing_users is not defined.
   ansible.builtin.set_fact:
-    namespaces_to_create: "{{ headscale_users }}"
+    users_to_create: "{{ headscale_users }}"
   when: existing_users is not defined
 
-- name: Create missing namespaces.
+- name: Create missing users.
   ansible.builtin.command:
     cmd: "{{ headscale_binary_path }} {{ headscale_user_command }} create {{ item }}"
-  with_items: "{{ namespaces_to_create }}"
-  register: namespace_created
-  changed_when: "'Namespace created' in namespace_created.stdout"
-  when: namespaces_to_create is defined and namespaces_to_create != 'None'
+  with_items: "{{ users_to_create }}"
+  register: user_created
+  changed_when: "'user created' in user_created.stdout"
+  when: users_to_create is defined and users_to_create != 'None'
