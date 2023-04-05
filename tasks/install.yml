@@ -35,9 +35,9 @@
     force:  true
   notify: restart service
 
-- name: "Create group {{ headscale_user_name }}."
+- name: "Create group {{ headscale_user_group }}."
   ansible.builtin.group:
-    name: "{{ headscale_user_name }}"
+    name: "{{ headscale_user_group }}"
     gid: "{{ headscale_user_gid }}"
     state: present
 
@@ -45,19 +45,19 @@
   ansible.builtin.user:
     name: "{{ headscale_user_name }}"
     uid: "{{ headscale_user_uid }}"
-    group: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_group }}"
     system: true
     shell: /usr/bin/nologin
     home: "{{ headscale_lib_dir_path }}"
     state: present
-    create_home: true
+    create_home: false
 
 - name: "Create {{ headscale_lib_dir_path }} directory."
   ansible.builtin.file:
     path: "{{ headscale_lib_dir_path }}"
     state: directory
     owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_group }}"
     mode: 0770
 
 - name: "Create {{ headscale_etc_dir_path }} directory."
@@ -65,7 +65,7 @@
     path: "{{ headscale_etc_dir_path }}"
     state: directory
     owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_group }}"
     mode: 0770
 
 - name: "Create {{ headscale_run_dir_path }} directory."
@@ -73,23 +73,14 @@
     path: "{{ headscale_run_dir_path }}"
     state: directory
     owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_group }}"
     mode: 0770
 
 - name: "Create {{ headscale_config.db_path }}."
   ansible.builtin.copy:
-    dest: "{{ headscale_config.db_path }}"
+    dest: "{{ headscale_config.db_path | default('/var/lib/headscale/db.sqlite') }}"
     owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_group }}"
     content: ""
     mode: 0660
-    force: false
-
-- name: "Create {{ headscale_config.unix_socket }}."
-  ansible.builtin.copy:
-    dest: "{{ headscale_config.unix_socket | default('/var/run/headscale.sock') }}"
-    owner: "{{ headscale_user_name }}"
-    group: "{{ headscale_user_name }}"
-    content: ""
-    mode: "{{ headscale_config.unix_socket_permission | default('0770')}}"
     force: false

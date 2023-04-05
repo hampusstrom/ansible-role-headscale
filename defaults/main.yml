@@ -55,6 +55,9 @@ headscale_backup_dir_path: "{{ headscale_lib_dir_path }}/backups"
 # Name of the user who will run headscale as a daemon. (User will be created if not present)
 headscale_user_name: headscale
 
+# The name of the group for the headscale system user.
+headscale_user_group: "{{ headscale_user_name }}"
+
 # The uid of the user.
 headscale_user_uid: 777
 
