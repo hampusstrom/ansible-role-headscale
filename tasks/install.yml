@@ -31,7 +31,7 @@
     dest: "{{ headscale_binary_path }}"
     owner: root
     group: root
-    mode: 0655
+    mode: 0755
     force:  true
   notify: restart service
 
@@ -68,11 +68,28 @@
     group: "{{ headscale_user_name }}"
     mode: 0770
 
-- name: "Create {{ headscale_db_path }}."
+- name: "Create {{ headscale_run_dir_path }} directory."
+  ansible.builtin.file:
+    path: "{{ headscale_run_dir_path }}"
+    state: directory
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0770
+
+- name: "Create {{ headscale_config.db_path }}."
   ansible.builtin.copy:
-    dest: "{{ headscale_db_path }}"
+    dest: "{{ headscale_config.db_path }}"
     owner: "{{ headscale_user_name }}"
     group: "{{ headscale_user_name }}"
     content: ""
-    mode: 0770
+    mode: 0660
+    force: false
+
+- name: "Create {{ headscale_config.unix_socket }}."
+  ansible.builtin.copy:
+    dest: "{{ headscale_config.unix_socket | default('/var/run/headscale.sock') }}"
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    content: ""
+    mode: "{{ headscale_config.unix_socket_permission | default('0770')}}"
     force: false
