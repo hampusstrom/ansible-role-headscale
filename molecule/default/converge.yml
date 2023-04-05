@@ -1,5 +1,18 @@
 ---
 - name: Converge
-  hosts: all
+  hosts: headscale
+  vars:
+    headscale_version: 0.20.0
+    headscale_config:
+      server_url: "http://127.0.01:8080"
+      listen_addr: 127.0.0.1:8080
+      private_key_path: "{{ headscale_lib_dir_path }}/private.key"
+      db_type: sqlite3
+      unix_socket: "{{ headscale_run_dir_path }}/headscale.sock"
+      ip_prefixes:
+        - 100.64.0.0/10
+      noise:
+        private_key_path: "{{ headscale_lib_dir_path }}/noise_private.key"
+
   roles:
     - role: hampusstrom.headscale
