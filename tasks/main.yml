@@ -7,7 +7,7 @@
     - install
     - upgrade
     - configure
-    - namespace
+    - users
 
 - name: Install headscale.
   ansible.builtin.include_tasks:
@@ -39,10 +39,10 @@
   until: headscale_metrics.status == 200
   retries: 10
 
-- name: Configure namespaces.
+- name: Configure users.
   ansible.builtin.include_tasks:
-    file: namespaces.yml
-  when: headscale_namespaces is defined and headscale_namespaces != 'None'
+    file: users.yml
+  when: headscale_users is defined and headscale_users != 'None' and headscale_users != []
   tags:
     - install
-    - namespace
+    - users
