@@ -1,6 +1,6 @@
 ---
 - name: Converge
-  hosts: headscale
+  hosts: all
   vars:
     headscale_version: 0.20.0
     headscale_config:
