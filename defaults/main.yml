@@ -24,11 +24,14 @@ headscale_acl: {}
 # Use this if you want your playbooks to be the source of truth for your headscale instance.
 headscale_remove_unmanaged_namespaces: false
 
-# namespaces that should exist.
-headscale_namespaces:
-  - default
+# users that should be created if they don't already exist.
+# Example 
+# headscale_users:
+#   - bobbytables
+#   - lisasimpson
+headscale_users: []
 
-# Where the downloaded binary should be put
+# Where the headscale binary should be installed.
 headscale_binary_path: /usr/local/bin/headscale
 
 # Path for the etc-directory.
@@ -44,6 +47,9 @@ headscale_run_dir_path: /var/run/headscale
 headscale_db_path: "{{ headscale_lib_dir_path }}/db.sqlite"
 
 # Path for where database backups will be stored.
+# Backups are automatically created before any upgrade of headscale.
+# If you choose to downgrade headscale, it is highly recommended to also restore your database. 
+# To do this, simply stop headscale, copy the db file to headscale_db_path and restart headscale.
 headscale_backup_dir_path: "{{ headscale_lib_dir_path }}/backups"
 
 # Name of the user who will run headscale as a daemon. (User will be created if not present)
