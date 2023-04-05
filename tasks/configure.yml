@@ -9,9 +9,18 @@
   notify: enable service
 
 - name: Set headscale config.yaml.
-  ansible.builtin.template:
-    src: config.yaml.j2
+  ansible.builtin.copy:
+    content: "{{ headscale_config | to_nice_yaml }}"
     dest: "{{ headscale_etc_dir_path }}/config.yaml"
+    owner: "{{ headscale_user_name }}"
+    group: "{{ headscale_user_name }}"
+    mode: 0660
+  notify: restart service
+
+- name: Set headscale acl.yaml.
+  ansible.builtin.copy:
+    content: "{{ headscale_acl | to_nice_yaml }}"
+    dest: "{{ headscale_etc_dir_path }}/acl.yaml"
     owner: "{{ headscale_user_name }}"
     group: "{{ headscale_user_name }}"
     mode: 0660
