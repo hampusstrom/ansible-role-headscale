@@ -10,7 +10,7 @@
 
 - name: Set headscale config.yaml.
   ansible.builtin.copy:
-    content: "{{ headscale_config | to_nice_yaml }}"
+    content: "{{ headscale_config | to_nice_yaml(sort_keys=False) }}"
     dest: "{{ headscale_etc_dir_path }}/config.yaml"
     owner: "{{ headscale_user_name }}"
     group: "{{ headscale_user_name }}"
@@ -19,7 +19,7 @@
 
 - name: Set headscale acl.yaml.
   ansible.builtin.copy:
-    content: "{{ headscale_acl | to_nice_yaml }}"
+    content: "{{ headscale_acl | to_nice_yaml(sort_keys=False) }}"
     dest: "{{ headscale_etc_dir_path }}/acl.yaml"
     owner: "{{ headscale_user_name }}"
     group: "{{ headscale_user_name }}"
