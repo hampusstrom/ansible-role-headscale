@@ -7,8 +7,11 @@
 # I.e. 'v0.16.4' should be defined as '0.16.4'
 headscale_version: latest
 
+# Whether we should let the role preform downgrades when a newer version of headscale is already installed.
 headscale_allow_downgrade: false
 
+# The user/repo github url to look for headscale releases in.
+# defaults to the official juanfont/headscale repo. 
 headscale_github_repository: juanfont/headscale
 
 # This role makes use of the GitHub API.
@@ -46,6 +49,9 @@ headscale_lib_dir_path: /var/lib/headscale
 # Path for the run directory.
 headscale_run_dir_path: /var/run/headscale
 
+# Path for the sqlite database file.
+headscale_db_path: /var/lib/headscale/db.sqlite
+
 # Path for where backups will be stored.
 headscale_backup_dir_path: "{{ headscale_lib_dir_path }}/backups"
 
@@ -61,128 +67,132 @@ headscale_user_uid: 777
 # The group id of the user.
 headscale_user_gid: 777
 
-# Everything below this point is builtin headscale settings from the default configuration file.
+headscale_config: {}
 
-headscale_server_url: https://headscale.example.com:8080
-# by default we only listen to connections from localhost
-# Set to 0.0.0.0:PORTOFYOURCHOICE in production
-headscale_listen_addr: 127.0.0.1:8080
-headscale_metrics_listen_addr: 127.0.0.1:9090
-headscale_grpc_listen_addr: 127.0.0.1:50443
-headscale_grpc_allow_insecure: false
+headscale_acl: {}
 
-headscale_private_key_path: /var/lib/headscale/private.key
-headscale_noise_private_key_path: /var/lib/headscale/noise_private.key
+# # Everything below this point is builtin headscale settings from the default configuration file.
 
-headscale_ip_prefixes:
-  - fd7a:115c:a1e0::/48
-  - 100.64.0.0/10
+# headscale_server_url: https://headscale.example.com:8080
+# # by default we only listen to connections from localhost
+# # Set to 0.0.0.0:PORTOFYOURCHOICE in production
+# headscale_listen_addr: 127.0.0.1:8080
+# headscale_metrics_listen_addr: 127.0.0.1:9090
+# headscale_grpc_listen_addr: 127.0.0.1:50443
+# headscale_grpc_allow_insecure: false
 
-# DERP & STUN
-headscale_derp_server_enabled: false
-headscale_derp_server_region_id: 999
-headscale_derp_server_region_code: "headscale"
-headscale_derp_server_region_name: "Headscale Embedded DERP"
-headscale_derp_server_stun_listen_addr: "0.0.0.0:3478"
-headscale_derp_urls:
-  - https://controlplane.tailscale.com/derpmap/default
+# headscale_private_key_path: /var/lib/headscale/private.key
+# headscale_noise_private_key_path: /var/lib/headscale/noise_private.key
 
-headscale_derp_paths:
-headscale_derp_auto_update_enabled: true
-headscale_derp_update_frequency: 24h
+# headscale_ip_prefixes:
+#   - fd7a:115c:a1e0::/48
+#   - 100.64.0.0/10
 
-headscale_disable_check_updates: false
-headscale_ephemeral_inactivity_timeout: 30m
-headscale_node_update_check_interval: 10s
+# # DERP & STUN
+# headscale_derp_server_enabled: false
+# headscale_derp_server_region_id: 999
+# headscale_derp_server_region_code: "headscale"
+# headscale_derp_server_region_name: "Headscale Embedded DERP"
+# headscale_derp_server_stun_listen_addr: "0.0.0.0:3478"
+# headscale_derp_urls:
+#   - https://controlplane.tailscale.com/derpmap/default
 
-headscale_db_type: sqlite3
-# Only used when db_type = sqlite3
-headscale_db_path: /var/lib/headscale/db.sqlite
+# headscale_derp_paths:
+# headscale_derp_auto_update_enabled: true
+# headscale_derp_update_frequency: 24h
 
-# DB settings below only affect headscale_db_type != sqlite3
-# I.e. if you use postgres, then db_type should be set to postgres,
-# and the db variables below should be configured accordingly.
-headscale_db_host: localhost
-headscale_db_port: 5432
-headscale_db_name: headscale
-headscale_db_user: foo
-headscale_db_pass: bar
-headscale_db_ssl: false
+# headscale_disable_check_updates: false
+# headscale_ephemeral_inactivity_timeout: 30m
+# headscale_node_update_check_interval: 10s
 
-# LetsEncrypt & ACME
-headscale_acme_url: https://acme-v02.api.letsencrypt.org/directory
-# REQUIRED for letsencrypt automatic cert retrieval to work
-headscale_acme_email: ""
-# REQUIRED for letsencrypt automatic cert retrieval to work
-headscale_tls_letsencrypt_hostname: ""
+# headscale_db_type: sqlite3
+# # Only used when db_type = sqlite3
+# 
 
-headscale_tls_client_auth_mode: relaxed
-headscale_tls_letsencrypt_cache_dir: /var/lib/headscale/cache
+# # DB settings below only affect headscale_db_type != sqlite3
+# # I.e. if you use postgres, then db_type should be set to postgres,
+# # and the db variables below should be configured accordingly.
+# headscale_db_host: localhost
+# headscale_db_port: 5432
+# headscale_db_name: headscale
+# headscale_db_user: foo
+# headscale_db_pass: bar
+# headscale_db_ssl: false
 
-# Port 80/TCP must be open in any firewall for the HTTP-01 challenge to work.
-headscale_tls_letsencrypt_challenge_type: HTTP-01
-headscale_tls_letsencrypt_listen: :http
+# # LetsEncrypt & ACME
+# headscale_acme_url: https://acme-v02.api.letsencrypt.org/directory
+# # REQUIRED for letsencrypt automatic cert retrieval to work
+# headscale_acme_email: ""
+# # REQUIRED for letsencrypt automatic cert retrieval to work
+# headscale_tls_letsencrypt_hostname: ""
 
-# If you want to use previously retrieved certificates or non-letsencrypt define the paths to them here
-headscale_tls_cert_path: ""
-headscale_tls_key_path: ""
+# headscale_tls_client_auth_mode: relaxed
+# headscale_tls_letsencrypt_cache_dir: /var/lib/headscale/cache
 
-# Logging
-headscale_log_format: text
-headscale_log_level: info
+# # Port 80/TCP must be open in any firewall for the HTTP-01 challenge to work.
+# headscale_tls_letsencrypt_challenge_type: HTTP-01
+# headscale_tls_letsencrypt_listen: :http
 
-# ACL
-headscale_acl_policy_path: ""
+# # If you want to use previously retrieved certificates or non-letsencrypt define the paths to them here
+# headscale_tls_cert_path: ""
+# headscale_tls_key_path: ""
 
-# DNS
-headscale_dns_config_override_local_dns: true
-headscale_dns_config_nameservers:
-  - 1.1.1.1
-headscale_dns_config_restricted_nameservers:
-# Example Configuration below
-# - domain: www.example.com
-#   dns_servers:
-#     - 192.168.1.1
-#     - 192.168.1.2
-# - domain: headscale.example.com
-#   dns_servers:
-#     - 192.168.2.5
-#     - 192.168.3.4
-#
-#
-# DNS search domains
-headscale_dns_config_domains: []
-headscale_dns_config_magic_dns: true
-headscale_dns_config_base_domain: example.com
+# # Logging
+# headscale_log_format: text
+# headscale_log_level: info
 
-# Unix Socket
-headscale_unix_socket: /var/run/headscale/headscale.sock
-headscale_unix_socket_permission: "0770"
+# # ACL
+# headscale_acl_policy_path: ""
 
-# OIDC
-# headscale_oidc_enabled must be true for any other oidc values to be set
-headscale_oidc_enabled: false
-headscale_oidc_only_start_if_oidc_is_available: true
-headscale_oidc_issuer: "https://your-oidc.issuer.com/path"
-headscale_oidc_client_id: "your-oidc-client-id"
-headscale_oidc_client_secret: "your-oidc-client-secret"
-headscale_oidc_scope:
-  - openid
-  - profile
-  - email
-  - custom
-headscale_oidc_extra_params:
-  - key: domain_hint
-    value: example.com
-headscale_oidc_allowed_domains:
-  - example.com
-headscale_oidc_allowed_users:
-  - alice@example.com
-headscale_oidc_namespace: first-name.last-name.example.com
-headscale_oidc_strip_email_domain: true
+# # DNS
+# headscale_dns_config_override_local_dns: true
+# headscale_dns_config_nameservers:
+#   - 1.1.1.1
+# headscale_dns_config_restricted_nameservers:
+# # Example Configuration below
+# # - domain: www.example.com
+# #   dns_servers:
+# #     - 192.168.1.1
+# #     - 192.168.1.2
+# # - domain: headscale.example.com
+# #   dns_servers:
+# #     - 192.168.2.5
+# #     - 192.168.3.4
+# #
+# #
+# # DNS search domains
+# headscale_dns_config_domains: []
+# headscale_dns_config_magic_dns: true
+# headscale_dns_config_base_domain: example.com
 
-# Logtail
-headscale_logtail_enabled: false
+# # Unix Socket
+# headscale_unix_socket: /var/run/headscale/headscale.sock
+# headscale_unix_socket_permission: "0770"
 
-# Misc
-headscale_randomize_client_port: false
+# # OIDC
+# # headscale_oidc_enabled must be true for any other oidc values to be set
+# headscale_oidc_enabled: false
+# headscale_oidc_only_start_if_oidc_is_available: true
+# headscale_oidc_issuer: "https://your-oidc.issuer.com/path"
+# headscale_oidc_client_id: "your-oidc-client-id"
+# headscale_oidc_client_secret: "your-oidc-client-secret"
+# headscale_oidc_scope:
+#   - openid
+#   - profile
+#   - email
+#   - custom
+# headscale_oidc_extra_params:
+#   - key: domain_hint
+#     value: example.com
+# headscale_oidc_allowed_domains:
+#   - example.com
+# headscale_oidc_allowed_users:
+#   - alice@example.com
+# headscale_oidc_namespace: first-name.last-name.example.com
+# headscale_oidc_strip_email_domain: true
+
+# # Logtail
+# headscale_logtail_enabled: false
+
+# # Misc
+# headscale_randomize_client_port: false
